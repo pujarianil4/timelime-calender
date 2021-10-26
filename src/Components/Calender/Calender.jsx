@@ -28,18 +28,21 @@ export const Calender = () => {
         StartMonth: "February",
         EndDate: "5",
         EndMonth: "April",
+        title:"soy"
       },
       {
         StartDate: "10",
         StartMonth: "September",
         EndDate: "26",
         EndMonth: "October",
+        title:"corn"
       },
      {
         StartDate: "30",
         StartMonth: "October",
         EndDate: "25",
         EndMonth: "November",
+        title:"soy"
       }
   ];
 
@@ -53,7 +56,7 @@ export const Calender = () => {
             <div
               key={month}
               style={
-                d.getMonth() === index ? { backgroundColor: "orange" } : {}
+                d.getMonth() === index ? { backgroundColor: " #E99921" } : {}
               }
               className="month"
             >
@@ -64,7 +67,7 @@ export const Calender = () => {
       </div>
     
       <Field cycles={cycles} />
-      <Field cycles={cycles} />
+     
     </div>
   );
 };
@@ -121,11 +124,11 @@ const Area = (props) => {
 
   const handleColor = () => {
     if (CurrentMonth >= startmonth + 1 && CurrentMonth <= lastmonth + 1 && Currentdate<=props.Cycle.EndDate && Currentdate>=props.Cycle.StartDate) {
-      return "green";
+      return "#90D6AA";
     } else if (Currentdate<=props.Cycle.StartDate && CurrentMonth <= lastmonth + 1 ) {
-      return "blue";
+      return "#82CFFF";
     } else {
-      return "gray";
+      return "#C2C7D0";
     }
   };
 
@@ -147,9 +150,11 @@ if(d===monthIndex&& e.day===Currentdate){
 // React.useEffect(()=>{
 //   console.log(allRef);
 // })
-const activeStyle={
-  backgroundColor: handleColor(),
+const showTitle=(day)=>{
 
+  if(day===+props.Cycle.StartDate && props.month===props.Cycle.StartMonth){
+    return true
+  }
 }
   
   return (
@@ -165,12 +170,14 @@ const activeStyle={
                 e.month=props.month
                 currentDate(e)
               }} 
-              key={day}
+              key={index}
               style={ { backgroundColor: handleColor() } }
               className="days"
-            ></div>:
+            >
+              <h4 className="title">{showTitle(day)&&props.Cycle.title}</h4>
+            </div>:
             <div
-              key={day}
+              key={index}
               ref={ (e)=>{
                 e.day=day
                 e.month=props.month

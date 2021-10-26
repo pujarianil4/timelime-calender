@@ -23,7 +23,7 @@ position: relative;
 .fields{
     width: 100%;
     height: 30px;
-  
+    margin-top: 10px;
     display: flex;
     position: absolute;
 }
@@ -32,6 +32,7 @@ position: relative;
     width: calc(100%/12);
     text-align: center;
     display: flex;
+   
     /* border: 1px solid black; */
 }
 .days{
@@ -47,4 +48,20 @@ position: relative;
 
 .active{
     border-end-end-radius: 50%;
+}
+
+.title{
+z-index: 4;
+top:5px;
+left: 10px;
+position: relative;
+margin: 0px;
+padding: 0px;
+font-weight: 400;
+color: #06431C;
+font-family: Noto Sans;
+font-style: normal;
+font-weight: normal;
+font-size: 18px;
+line-height: 20px;
 }
