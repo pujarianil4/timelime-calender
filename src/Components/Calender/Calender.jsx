@@ -1,4 +1,6 @@
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
+import { useThrotling } from "../../Customhook/useThrotling";
+import Dateindicator from "../DateIndicator/Dateindicator";
 import "./Calender.css";
 const months = [
   "January",
@@ -22,15 +24,15 @@ export const Calender = () => {
 
 
     {
-        StartDate: "10",
-        StartMonth: "January",
+        StartDate: "5",
+        StartMonth: "February",
         EndDate: "5",
-        EndMonth: "February",
+        EndMonth: "April",
       },
       {
         StartDate: "10",
         StartMonth: "September",
-        EndDate: "24",
+        EndDate: "26",
         EndMonth: "October",
       },
      {
@@ -43,6 +45,7 @@ export const Calender = () => {
 
   return (
     <div className="container">
+       <Dateindicator />
       <p>{d.getFullYear()}</p>
       <div className="years">
         {months.map((month, index) => {
@@ -50,7 +53,7 @@ export const Calender = () => {
             <div
               key={month}
               style={
-                d.getMonth() === index ? { backgroundColor: "yellow" } : {}
+                d.getMonth() === index ? { backgroundColor: "orange" } : {}
               }
               className="month"
             >
@@ -59,22 +62,31 @@ export const Calender = () => {
           );
         })}
       </div>
-
+    
       <Field cycles={cycles} />
-      <Field cycles={cycles} />  <Field cycles={cycles} />
+      <Field cycles={cycles} />
     </div>
   );
 };
 
 const Field = ({ cycles }) => {
+ const [ all , setAll]=useState([])
 
+ const handleSet=(data)=>{
+   console.log(data);
+   setAll([...data])
+ }
+
+ React.useEffect(() => {
+   console.log(all);
+ }, [all])
   return (
     <div className="Allfields">
       {cycles.map((draw, index) => {
         return (
           <div key={index} className="fields">
             {months.map((month, index) => {
-              return <Area key={month + 1} Cycle={draw} month={month} />;
+              return <Area key={month + 1} handleSet={handleSet} Cycle={draw} month={month} />;
             })}
           </div>
         );
@@ -84,13 +96,13 @@ const Field = ({ cycles }) => {
 };
 
 const Area = (props) => {
-  console.log(props.Cycle);
+  
   let startmonth = months.indexOf(props.Cycle.StartMonth);
   let lastmonth = months.indexOf(props.Cycle.EndMonth);
   let date = new Date();
 
   const Conditional = (month, day) => {
-    let CurrentMonth = months.indexOf(month)+1;
+    let CurrentMonth = months.indexOf(month);
 
     if (CurrentMonth > startmonth && CurrentMonth < lastmonth) {
       return true;
@@ -104,12 +116,10 @@ const Area = (props) => {
     }
     return false
   };
+  let Currentdate = date.getDate();
+  let CurrentMonth = +date.toJSON().split("-")[1];
 
   const handleColor = () => {
-    let Currentdate = date.getDate();
-    let CurrentMonth = +date.toJSON().split("-")[1];
-    console.log(Currentdate, CurrentMonth, startmonth + 1, lastmonth + 1);
-
     if (CurrentMonth >= startmonth + 1 && CurrentMonth <= lastmonth + 1 && Currentdate<=props.Cycle.EndDate && Currentdate>=props.Cycle.StartDate) {
       return "green";
     } else if (Currentdate<=props.Cycle.StartDate && CurrentMonth <= lastmonth + 1 ) {
@@ -119,20 +129,58 @@ const Area = (props) => {
     }
   };
 
-  handleColor();
+  
+  const allRef= React.useRef([])
+ 
+const currentDate=(e)=>{
+let d= +date.toLocaleDateString().split("/")[0]
+let monthIndex= months.indexOf(e.month)+1
+
+if(d===monthIndex&& e.day===Currentdate){
+
+  allRef.current= e
+  console.log(allRef);
+   localStorage.setItem("dateIndiactor",allRef.current.offsetLeft)
+}
+}
+
+// React.useEffect(()=>{
+//   console.log(allRef);
+// })
+const activeStyle={
+  backgroundColor: handleColor(),
+
+}
+  
   return (
-    <div className="field">
-      {Days.map((day) => {
+    <div className="field"  >
+      {Days.map((day,index) => {
         return (
-          <div
-            key={day}
-            style={
-              Conditional(props.month, day)
-                ? { backgroundColor: handleColor() }
-                : {}
-            }
-            className="days"
-          ></div>
+          <>
+            {
+            Conditional(props.month, day)? 
+             <div
+              ref={ (e)=>{
+                e.day=day
+                e.month=props.month
+                currentDate(e)
+              }} 
+              key={day}
+              style={ { backgroundColor: handleColor() } }
+              className="days"
+            ></div>:
+            <div
+              key={day}
+              ref={ (e)=>{
+                e.day=day
+                e.month=props.month
+                 currentDate(e)
+              }} 
+              className="days"
+            ></div>
+            } 
+          </>
+       
         );
       })}
     </div>
