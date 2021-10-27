@@ -1,6 +1,6 @@
-import React, { useEffect, useRef, useState } from "react";
-import { useThrotling } from "../../Customhook/useThrotling";
+import React from "react";
 import Dateindicator from "../DateIndicator/Dateindicator";
+import Fieldbar from "../Fieldbar/Fieldbar";
 import "./Calender.css";
 const months = [
   "January",
@@ -16,36 +16,57 @@ const months = [
   "November",
   "December",
 ];
+
+let cycles = [
+
+  {
+      StartDate: "5",
+      StartMonth: "February",
+      EndDate: "5",
+      EndMonth: "April",
+      title:"soy"
+    },
+    {
+      StartDate: "10",
+      StartMonth: "September",
+      EndDate: "27",
+      EndMonth: "October",
+      title:"corn"
+    },
+   {
+      StartDate: "30",
+      StartMonth: "October",
+      EndDate: "25",
+      EndMonth: "November",
+      title:"soy"
+    },
+    ["4 January 2021","15 June 2021"  ,"15 September 2021"]
+];
+
+let cycles2 = [
+
+  {
+      StartDate: "5",
+      StartMonth: "March",
+      EndDate: "5",
+      EndMonth: "April",
+      title:"soy"
+    },
+    {
+      StartDate: "5",
+      StartMonth: "October",
+      EndDate: "27",
+      EndMonth: "November",
+      title:"corn"
+    },
+    ["4 January 2021","15 June 2021"  ,"15 September 2021"]
+];
+
 const Days = new Array(30).fill().map((_, idx) => 1 + idx);
 export const Calender = () => {
   const d = new Date();
 
-  let cycles = [
-
-
-    {
-        StartDate: "5",
-        StartMonth: "February",
-        EndDate: "5",
-        EndMonth: "April",
-        title:"soy"
-      },
-      {
-        StartDate: "10",
-        StartMonth: "September",
-        EndDate: "26",
-        EndMonth: "October",
-        title:"corn"
-      },
-     {
-        StartDate: "30",
-        StartMonth: "October",
-        EndDate: "25",
-        EndMonth: "November",
-        title:"soy"
-      }
-  ];
-
+  
   return (
     <div className="container">
        <Dateindicator />
@@ -67,42 +88,43 @@ export const Calender = () => {
       </div>
     
       <Field cycles={cycles} />
-     
+      <Field cycles={cycles2} />
     </div>
   );
 };
 
 const Field = ({ cycles }) => {
- const [ all , setAll]=useState([])
 
- const handleSet=(data)=>{
-   console.log(data);
-   setAll([...data])
- }
 
- React.useEffect(() => {
-   console.log(all);
- }, [all])
   return (
     <div className="Allfields">
       {cycles.map((draw, index) => {
         return (
           <div key={index} className="fields">
             {months.map((month, index) => {
-              return <Area key={month + 1} handleSet={handleSet} Cycle={draw} month={month} />;
+              return <Area key={month + 1}  Cycle={draw} month={month} />;
             })}
           </div>
         );
       })}
+      <div className="Field_Container">
+   
+  
+      </div>
+      
     </div>
   );
 };
+
+
 
 const Area = (props) => {
   
   let startmonth = months.indexOf(props.Cycle.StartMonth);
   let lastmonth = months.indexOf(props.Cycle.EndMonth);
   let date = new Date();
+  let Currentdate = date.getDate();
+  let CurrentMonth = +date.toJSON().split("-")[1];
 
   const Conditional = (month, day) => {
     let CurrentMonth = months.indexOf(month);
@@ -119,8 +141,7 @@ const Area = (props) => {
     }
     return false
   };
-  let Currentdate = date.getDate();
-  let CurrentMonth = +date.toJSON().split("-")[1];
+
 
   const handleColor = () => {
     if (CurrentMonth >= startmonth + 1 && CurrentMonth <= lastmonth + 1 && Currentdate<=props.Cycle.EndDate && Currentdate>=props.Cycle.StartDate) {
@@ -157,6 +178,17 @@ const showTitle=(day)=>{
   }
 }
   
+//const fieldbarDates=["4 January 2021","15 June 2021"  ,"15 September 2021"]
+
+const handleFieldBar=(day,month)=>{
+   let check= cycles[cycles.length-1].includes(`${day} ${month} 2021`)
+
+   if(check){
+     return true
+   }
+
+   return false
+}
   return (
     <div className="field"  >
       {Days.map((day,index) => {
@@ -175,6 +207,9 @@ const showTitle=(day)=>{
               className="days"
             >
               <h4 className="title">{showTitle(day)&&props.Cycle.title}</h4>
+              {
+                handleFieldBar(day,props.month)&& <Fieldbar day={day} month={props.month}/>
+              }
             </div>:
             <div
               key={index}
@@ -184,7 +219,11 @@ const showTitle=(day)=>{
                  currentDate(e)
               }} 
               className="days"
-            ></div>
+            >
+              {
+                handleFieldBar(day,props.month)&& <Fieldbar/>
+              }
+            </div>
             } 
           </>
        
